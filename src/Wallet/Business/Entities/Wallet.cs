@@ -26,14 +26,17 @@ namespace WalletService.Business.Entities
 
         public void AddFunds(decimal amount)
         {
-            if (amount <= 0) throw new ArgumentException("Amount must be positive.");
+            if (amount <= 0)
+                throw new ArgumentException("Amount must be positive.");
             Balance += amount;
         }
 
         public void SubtractFunds(decimal amount)
         {
-            if (amount <= 0) throw new ArgumentException("Amount must be positive.");
-            if (Balance < amount) throw new InvalidOperationException("Insufficient funds.");
+            if (amount <= 0)
+                throw new ArgumentException("Amount must be positive.");
+            if (amount > Balance)
+                throw new InvalidOperationException("Insufficient funds.");
             Balance -= amount;
         }
     }

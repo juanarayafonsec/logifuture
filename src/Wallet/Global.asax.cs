@@ -9,6 +9,8 @@ using WalletService.Business.Interfaces;
 using WalletService.Data.Repository;
 using WalletService.Data.Context;
 using WalletService.Api.DependencyInjection;
+using WalletService.Api.Business.Interfaces;
+using WalletService.Api.Data.Repository;
 
 namespace WalletService.Api
 {
@@ -29,6 +31,7 @@ namespace WalletService.Api
 
             container.RegisterType<IWalletRepository, WalletRepository>();
             container.RegisterType<ITransactionService, TransactionService>();
+            container.RegisterType<IWalletTransactionRepository, WalletTransactionRepository>();
             container.RegisterType<WalletDbContext, WalletDbContext>(new HierarchicalLifetimeManager());
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityResolver(container);
