@@ -8,6 +8,5 @@ namespace WalletService.Api.Business.Interfaces
     {
         Task<bool> ExistsAsync(Guid transactionId);
         Task AddAsync(WalletTransaction transaction);
-        Task SaveChangesAsync();
     }
 }

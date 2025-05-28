@@ -179,10 +179,12 @@
     <Compile Include="Business\Entities\Wallet.cs" />
     <Compile Include="Business\Entities\WalletTransaction.cs" />
     <Compile Include="Business\Interfaces\ITansactionService.cs" />
+    <Compile Include="Business\Interfaces\IUnitOfWork.cs" />
     <Compile Include="Business\Interfaces\IWalletRepository.cs" />
     <Compile Include="Business\Interfaces\IWalletTransactionRepository.cs" />
     <Compile Include="Business\Services\TansactionService.cs" />
     <Compile Include="Data\Context\WalletDbContext.cs" />
+    <Compile Include="Data\Repository\UnitOfWork.cs" />
     <Compile Include="Data\Repository\WalletRepository.cs" />
     <Compile Include="Data\Repository\WalletTransactionRepository.cs" />
     <Compile Include="Global.asax.cs">

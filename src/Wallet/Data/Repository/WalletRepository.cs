@@ -15,6 +15,5 @@ namespace WalletService.Data.Repository
         public Task<Wallet> GetByIdAsync(Guid id) => _context.Wallets.FindAsync(id);
         public Task AddAsync(Wallet wallet) { _context.Wallets.Add(wallet); return Task.CompletedTask; }
         public void Update(Wallet wallet) => _context.Entry(wallet).State = EntityState.Modified;
-        public Task SaveChangesAsync() => _context.SaveChangesAsync();
     }
 }

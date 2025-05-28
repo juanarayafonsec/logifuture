@@ -8,32 +8,30 @@ namespace WalletService.Business.Services
 {
     public class TransactionService : ITransactionService
     {
-        private readonly IWalletRepository _walletRepository;
-        private readonly IWalletTransactionRepository _transactionRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public TransactionService(IWalletRepository walletRepository, IWalletTransactionRepository transactionRepository)
+        public TransactionService(IUnitOfWork unitOfWork)
         {
-            _walletRepository = walletRepository;
-            _transactionRepository = transactionRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Guid> CreateWalletAsync(Guid customerId, string currency)
         {
             var wallet = new Wallet(Guid.NewGuid(), customerId, currency);
-            await _walletRepository.AddAsync(wallet);
-            await _walletRepository.SaveChangesAsync();
+            await _unitOfWork.Wallets.AddAsync(wallet);
+            await _unitOfWork.SaveChangesAsync();
             return wallet.Id;
         }
 
         public async Task DepositAsync(Guid walletId, Guid transactionId, decimal amount)
         {
             if (amount <= 0) throw new ArgumentException("Amount must be positive.");
-            if (await _transactionRepository.ExistsAsync(transactionId)) throw new InvalidOperationException($"Transaction with ID {transactionId} already exists"); ;
-
-            var wallet = await _walletRepository.GetByIdAsync(walletId) ?? throw new InvalidOperationException("Wallet not found");
+            if (await _unitOfWork.Transactions.ExistsAsync(transactionId)) throw new InvalidOperationException($"Transaction with ID {transactionId} already exists"); ;
+            var wallet = await _unitOfWork.Wallets.GetByIdAsync(walletId)
+                                      ?? throw new InvalidOperationException("Wallet not found");
             wallet.AddFunds(amount);
 
-            await _transactionRepository.AddAsync(new WalletTransaction
+            await _unitOfWork.Transactions.AddAsync(new WalletTransaction
             {
                 Id = transactionId,
                 WalletId = walletId,
@@ -42,20 +40,20 @@ namespace WalletService.Business.Services
                 Type = TransactionType.Deposit.ToString()
             });
 
-            _walletRepository.Update(wallet);
-            await _walletRepository.SaveChangesAsync();
-            await _transactionRepository.SaveChangesAsync();
+            _unitOfWork.Wallets.Update(wallet);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task WithdrawAsync(Guid walletId, Guid transactionId, decimal amount)
         {
             if (amount <= 0) throw new ArgumentException("Amount must be positive.");
-            if (await _transactionRepository.ExistsAsync(transactionId)) throw new InvalidOperationException($"Transaction with ID {transactionId} already exists"); ;
+            if (await _unitOfWork.Transactions.ExistsAsync(transactionId)) throw new InvalidOperationException($"Transaction with ID {transactionId} already exists"); ;
 
-            var wallet = await _walletRepository.GetByIdAsync(walletId) ?? throw new InvalidOperationException("Wallet not found");
+            var wallet = await _unitOfWork.Wallets.GetByIdAsync(walletId)
+                         ?? throw new InvalidOperationException("Wallet not found");
             wallet.SubtractFunds(amount);
 
-            await _transactionRepository.AddAsync(new WalletTransaction
+            await _unitOfWork.Transactions.AddAsync(new WalletTransaction
             {
                 Id = transactionId,
                 WalletId = walletId,
@@ -64,14 +62,15 @@ namespace WalletService.Business.Services
                 Type = TransactionType.Withdraw.ToString()
             });
 
-            _walletRepository.Update(wallet);
-            await _walletRepository.SaveChangesAsync();
-            await _transactionRepository.SaveChangesAsync();
+            _unitOfWork.Wallets.Update(wallet);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task<decimal> GetBalanceAsync(Guid walletId)
         {
-            var wallet = await _walletRepository.GetByIdAsync(walletId) ?? throw new InvalidOperationException("Wallet not found");
+            var wallet = await _unitOfWork.Wallets.GetByIdAsync(walletId)
+                          ?? throw new InvalidOperationException("Wallet not found");
+
             return wallet.Balance;
         }
     }

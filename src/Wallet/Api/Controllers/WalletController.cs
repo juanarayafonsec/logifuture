@@ -49,3 +49,5 @@ namespace WalletService.Api.Controllers
     }
 
 }
+//84cbae6b-ad16-4b84-872f-20c8f63680e2 EUR
+// f116e0a5-3e20-45f4-b4ec-96890181de8b USD validar que solo exista iuna cuenta del mismo typi

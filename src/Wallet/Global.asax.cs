@@ -32,6 +32,7 @@ namespace WalletService.Api
             container.RegisterType<IWalletRepository, WalletRepository>();
             container.RegisterType<ITransactionService, TransactionService>();
             container.RegisterType<IWalletTransactionRepository, WalletTransactionRepository>();
+            container.RegisterType<IUnitOfWork, UnitOfWork>();
             container.RegisterType<WalletDbContext, WalletDbContext>(new HierarchicalLifetimeManager());
 
             GlobalConfiguration.Configuration.DependencyResolver = new UnityResolver(container);

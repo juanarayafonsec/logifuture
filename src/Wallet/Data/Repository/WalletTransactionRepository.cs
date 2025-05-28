@@ -14,6 +14,5 @@ namespace WalletService.Api.Data.Repository
 
         public Task<bool> ExistsAsync(Guid transactionId) => _context.WalletTransactions.AnyAsync(t => t.Id == transactionId);
         public Task AddAsync(WalletTransaction transaction) { _context.WalletTransactions.Add(transaction); return Task.CompletedTask; }
-        public Task SaveChangesAsync() => _context.SaveChangesAsync();
     }
 }

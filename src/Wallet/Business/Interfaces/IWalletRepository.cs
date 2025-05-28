@@ -9,6 +9,5 @@ namespace WalletService.Business.Interfaces
         Task<Wallet> GetByIdAsync(Guid id);
         Task AddAsync(Wallet wallet);
         void Update(Wallet wallet);
-        Task SaveChangesAsync();
     }
 }
