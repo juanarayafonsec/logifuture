@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\..\packages\EntityFramework.6.5.1\build\EntityFramework.props" Condition="Exists('..\..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" />
   <Import Project="..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -8,7 +9,7 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F2B52FE5-543E-47E5-AD5F-A3B7969EFF19}</ProjectGuid>
+    <ProjectGuid>{B62C6C71-D15E-4452-85BC-DC069663FD6C}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -45,6 +46,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json.Bson, Version=1.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.Bson.1.0.2\lib\net45\Newtonsoft.Json.Bson.dll</HintPath>
@@ -160,13 +167,35 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\App_Start\DbInitializer.cs" />
     <Compile Include="Api\App_Start\SwaggerConfig.cs" />
     <Compile Include="Api\App_Start\UnityConfig.cs" />
     <Compile Include="Api\App_Start\WebApiConfig.cs" />
-    <Compile Include="Api\Controllers\DummyController.cs" />
+    <Compile Include="Api\Controllers\WalletsController.cs" />
+    <Compile Include="Api\DependencyInjection\UnityResolver.cs" />
+    <Compile Include="Api\DTOs\CreateWalletRequest.cs" />
+    <Compile Include="Api\DTOs\WalletTransactionRequest.cs" />
+    <Compile Include="Business\Entities\CurrencyType.cs" />
+    <Compile Include="Business\Entities\TransactionType.cs" />
+    <Compile Include="Business\Entities\Wallet.cs" />
+    <Compile Include="Business\Entities\WalletTransaction.cs" />
+    <Compile Include="Business\Interfaces\ITansactionService.cs" />
+    <Compile Include="Business\Interfaces\IWalletRepository.cs" />
+    <Compile Include="Business\Services\TansactionService.cs" />
+    <Compile Include="Data\Context\WalletDbContext.cs" />
+    <Compile Include="Data\Repository\WalletRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202505281550377_InitialCreate.cs" />
+    <Compile Include="Migrations\202505281550377_InitialCreate.Designer.cs">
+      <DependentUpon>202505281550377_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202505281643090_InitialCreate1.cs" />
+    <Compile Include="Migrations\202505281643090_InitialCreate1.Designer.cs">
+      <DependentUpon>202505281643090_InitialCreate1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -181,12 +210,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Api\DTOs\" />
-    <Folder Include="Business\Entities\" />
-    <Folder Include="Business\Interfaces\" />
-    <Folder Include="Business\Services\" />
-    <Folder Include="Data\Context\" />
-    <Folder Include="Data\Repository\" />
+    <EmbeddedResource Include="Migrations\202505281550377_InitialCreate.resx">
+      <DependentUpon>202505281550377_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202505281643090_InitialCreate1.resx">
+      <DependentUpon>202505281643090_InitialCreate1.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -224,7 +253,10 @@
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.2.0.1\build\net46\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
   </Target>
+  <Import Project="..\..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
