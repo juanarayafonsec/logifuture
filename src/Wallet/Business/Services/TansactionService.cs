@@ -17,6 +17,9 @@ namespace WalletService.Business.Services
 
         public async Task<Guid> CreateWalletAsync(Guid customerId, string currency)
         {
+            if (await _unitOfWork.Wallets.ExistsByCustomerAndCurrencyAsync(customerId, currency))
+                throw new InvalidOperationException("A wallet with this currency already exists for the customer.");
+
             var wallet = new Wallet(Guid.NewGuid(), customerId, currency);
             await _unitOfWork.Wallets.AddAsync(wallet);
             await _unitOfWork.SaveChangesAsync();

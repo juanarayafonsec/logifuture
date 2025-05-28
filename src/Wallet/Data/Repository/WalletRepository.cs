@@ -13,6 +13,12 @@ namespace WalletService.Data.Repository
         public WalletRepository(WalletDbContext context) => _context = context;
 
         public Task<Wallet> GetByIdAsync(Guid id) => _context.Wallets.FindAsync(id);
+
+        public Task<bool> ExistsByCustomerAndCurrencyAsync(Guid customerId, string currency)
+        {
+            return _context.Wallets.AnyAsync(w => w.CustomerId == customerId && w.Currency == currency);
+        }
+
         public Task AddAsync(Wallet wallet) { _context.Wallets.Add(wallet); return Task.CompletedTask; }
         public void Update(Wallet wallet) => _context.Entry(wallet).State = EntityState.Modified;
     }
